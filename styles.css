@@ -43,140 +43,100 @@ html, body {
 
 body {
     display: flex;
+    flex-direction: column;
 }
 
 /* ======================================
-   SIDEBAR
+   APP LAYOUT - 3 Column
    ====================================== */
-.sidebar {
-    width: var(--sidebar-width);
-    min-width: var(--sidebar-width);
-    background: var(--bg-sidebar);
-    border-right: 1px solid var(--border);
+.app-layout {
     display: flex;
-    flex-direction: column;
+    flex: 1;
     height: 100vh;
-    z-index: 10;
+    overflow: hidden;
 }
 
-.sidebar-header {
+.sidebar {
+    display: none;
+}
+
+/* ======================================
+   SIDE PANELS
+   ====================================== */
+.side-panel {
+    width: 300px;
+    min-width: 300px;
+    height: 100vh;
+    background: var(--bg-secondary);
+    border-color: var(--border);
+    overflow-y: auto;
+    opacity: 1;
+    flex-shrink: 0;
+}
+
+.side-panel-left {
+    border-right: 1px solid var(--border);
+}
+
+.side-panel-right {
+    border-left: 1px solid var(--border);
+}
+
+.side-panel-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 24px 20px;
+    justify-content: space-between;
+    padding: 20px 20px 16px;
     border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg-secondary);
+    z-index: 5;
 }
 
-.logo-text h1 {
+.side-panel-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.side-panel-header h3 .material-icons-outlined {
+    color: var(--accent);
+    font-size: 20px;
+}
+
+.side-panel-content {
+    padding: 20px;
+}
+
+/* ======================================
+   TOP HEADER
+   ====================================== */
+.top-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 20px 0;
+    margin-bottom: 8px;
+}
+
+.top-header .logo-text h1 {
+    font-size: 18px;
     font-weight: 800;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     color: var(--text-primary);
 }
 
-.logo-text p {
+.top-header .logo-text p {
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 1.5px;
     color: var(--accent);
     margin-top: 2px;
-}
-
-.sidebar-nav {
-    padding: 12px 0;
-    flex: 1;
-}
-
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 24px;
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    transition: all var(--transition);
-    border-left: 3px solid transparent;
-    cursor: pointer;
-}
-
-.nav-item:hover {
-    background: var(--bg-hover);
-    color: var(--text-primary);
-}
-
-.nav-item.active {
-    background: rgba(230, 57, 70, 0.08);
-    color: var(--text-primary);
-    border-left-color: var(--accent);
-}
-
-.nav-item .material-icons-outlined {
-    font-size: 20px;
-}
-
-/* Sidebar Footer */
-.sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid var(--border);
-}
-
-.animation-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.animation-header span {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-}
-
-.animation-count {
-    color: var(--text-muted) !important;
-}
-
-.animation-controls {
-    display: flex;
-    gap: 6px;
-}
-
-.anim-btn {
-    width: 40px;
-    height: 36px;
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text-secondary);
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition);
-}
-
-.anim-btn:hover {
-    background: var(--bg-hover);
-    color: var(--text-primary);
-}
-
-.anim-btn.accent {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-}
-
-.anim-btn.accent:hover {
-    background: var(--accent-light);
-}
-
-.anim-btn .material-icons-outlined {
-    font-size: 18px;
 }
 
 /* ======================================
@@ -185,8 +145,9 @@ body {
 .main-content {
     flex: 1;
     overflow-y: auto;
-    padding: 32px 40px;
+    padding: 0 40px 32px;
     height: 100vh;
+    min-width: 0;
 }
 
 .section {
@@ -220,6 +181,7 @@ body {
 .controls-bar {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     margin-bottom: 20px;
 }
@@ -293,6 +255,54 @@ body {
     background: linear-gradient(135deg, var(--accent-light), var(--accent));
     transform: translateY(-1px);
     box-shadow: 0 4px 20px rgba(230,57,70,0.4);
+}
+
+/* ======================================
+   FULLSCREEN MODE
+   ====================================== */
+.pitch-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.pitch-container.fullscreen .pitch {
+    width: 100%;
+    height: 100%;
+    max-width: 700px;
+    max-height: 95vh;
+}
+
+.fullscreen-exit-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10000;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+}
+
+.fullscreen-exit-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--accent);
 }
 
 .btn-ai .material-icons-outlined {
@@ -492,11 +502,6 @@ body {
     z-index: 1;
 }
 
-/* Penalty arcs - hidden */
-.pitch-penalty-arc-top,
-.pitch-penalty-arc-bottom {
-    display: none;
-}
 
 /* Corners */
 .pitch-corner-tl,
@@ -603,48 +608,10 @@ body {
 }
 
 /* ======================================
-   ANALYSIS PANEL
+   ANALYSIS PANEL (legacy, kept for compatible classes)
    ====================================== */
 .analysis-panel {
-    position: fixed;
-    top: 0;
-    left: -480px;
-    width: 460px;
-    height: 100vh;
-    background: var(--bg-secondary);
-    border-right: 1px solid var(--border);
-    z-index: 100;
-    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
-    box-shadow: 8px 0 32px rgba(0,0,0,0.3);
-}
-
-.analysis-panel.open {
-    left: 0;
-}
-
-.analysis-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    background: var(--bg-secondary);
-    z-index: 5;
-}
-
-.analysis-header h3 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.analysis-header h3 .material-icons-outlined {
-    color: var(--accent);
+    display: none;
 }
 
 .btn-close {
@@ -660,10 +627,6 @@ body {
 .btn-close:hover {
     background: var(--bg-hover);
     color: var(--text-primary);
-}
-
-.analysis-content {
-    padding: 24px;
 }
 
 .analysis-loading {
@@ -1034,30 +997,37 @@ body {
 /* ======================================
    RESPONSIVE
    ====================================== */
+@media (max-width: 1200px) {
+    .side-panel {
+        width: 240px;
+        min-width: 240px;
+    }
+}
+
 @media (max-width: 900px) {
-    .sidebar {
-        width: 60px;
-        min-width: 60px;
-    }
-    
-    .sidebar-header .logo-text,
-    .nav-item span:not(.material-icons-outlined),
-    .sidebar-footer {
-        display: none;
-    }
-    
-    .nav-item {
-        justify-content: center;
-        padding: 14px;
-    }
-    
     .main-content {
-        padding: 20px;
+        padding: 0 20px 20px;
     }
-    
-    .analysis-panel {
+
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .side-panel {
         width: 100%;
-        left: -100%;
+        min-width: 100%;
+        height: auto;
+        max-height: 50vh;
+    }
+
+    .side-panel-left {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .side-panel-right {
+        border-left: none;
+        border-top: 1px solid var(--border);
     }
     
     .matchup-container {
@@ -1085,15 +1055,111 @@ body {
 .analysis-section:nth-child(3) { animation-delay: 0.2s; }
 .analysis-section:nth-child(4) { animation-delay: 0.3s; }
 
-/* Overlay when panel is open */
+/* Overlay - no longer needed with side panels */
 .overlay {
     display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 90;
 }
 
-.overlay.active {
-    display: block;
+/* Side panel loading */
+.side-panel .analysis-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 30px 10px;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+/* Side panel analysis sections */
+.side-panel .analysis-section {
+    margin-bottom: 20px;
+}
+
+.side-panel .analysis-section h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.side-panel .analysis-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.side-panel .analysis-section li {
+    padding: 8px 10px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    border-left: 3px solid var(--border);
+    margin-bottom: 6px;
+    border-radius: 0 6px 6px 0;
+    background: var(--bg-card);
+    transition: all var(--transition);
+}
+
+.side-panel .analysis-section li:hover {
+    border-left-color: var(--accent);
+    color: var(--text-primary);
+}
+
+.side-panel .analysis-section.strengths li {
+    border-left-color: #22c55e;
+}
+
+.side-panel .analysis-section.weaknesses li {
+    border-left-color: #ef4444;
+}
+
+.side-panel .analysis-section.tips li {
+    border-left-color: #f59e0b;
+}
+
+.side-panel .stat-bars {
+    width: 100%;
+}
+
+.side-panel .stat-bar {
+    margin-bottom: 12px;
+}
+
+.side-panel .stat-bar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.side-panel .stat-bar-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.side-panel .stat-bar-value {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.side-panel .stat-bar-track {
+    height: 5px;
+    background: var(--bg-card);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.side-panel .stat-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
 }

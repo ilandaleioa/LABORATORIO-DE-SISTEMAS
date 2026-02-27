@@ -449,6 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initComparisonSection();
     initMatchupSection();
     initSquadSection();
+    initFullscreen();
     renderFormation(currentFormation);
 });
 
@@ -481,10 +482,12 @@ function initFormationSelector() {
     select.addEventListener("change", () => {
         currentFormation = select.value;
         renderFormation(currentFormation);
+        showAnalysis(currentFormation);
     });
     
     resetBtn.addEventListener("click", () => {
         renderFormation(currentFormation);
+        showAnalysis(currentFormation);
     });
 }
 
@@ -589,49 +592,50 @@ function initPlayerDrag(player, pitch) {
 }
 
 // ======================================
-// PANEL DE ANÁLISIS IA
+// PANEL DE ANÁLISIS IA (PANELES LATERALES)
 // ======================================
 function initAnalysisPanel() {
     const btnAnalyze = document.getElementById("btnAnalyze");
-    const panel = document.getElementById("analysisPanel");
-    const btnClose = document.getElementById("btnCloseAnalysis");
     
     btnAnalyze.addEventListener("click", () => {
         showAnalysis(currentFormation);
     });
     
-    btnClose.addEventListener("click", () => {
-        panel.classList.remove("open");
-        removeOverlay();
-    });
+    // Cargar análisis automáticamente al inicio
+    showAnalysis(currentFormation);
 }
 
+
+
 function showAnalysis(formationKey) {
-    const panel = document.getElementById("analysisPanel");
-    const content = document.getElementById("analysisContent");
+    const leftPanel = document.getElementById("sidePanelLeft");
+    const rightPanel = document.getElementById("sidePanelRight");
+    const leftContent = document.getElementById("sidePanelLeftContent");
+    const rightContent = document.getElementById("sidePanelRightContent");
     
-    // Mostrar loading
-    panel.classList.add("open");
-    showOverlay();
-    
-    content.innerHTML = `
+    // Mostrar loading en ambos
+    const loadingHTML = `
         <div class="analysis-loading">
             <div class="spinner"></div>
             <p>Analizando sistema ${formationKey}...</p>
         </div>
     `;
+    leftContent.innerHTML = loadingHTML;
+    rightContent.innerHTML = loadingHTML;
     
     // Simular análisis IA
     setTimeout(() => {
         const data = ANALYSIS_DATA[formationKey];
         if (!data) {
-            content.innerHTML = "<p>No hay datos de análisis para esta formación.</p>";
+            leftContent.innerHTML = "<p>No hay datos de análisis para esta formación.</p>";
+            rightContent.innerHTML = "";
             return;
         }
         
-        content.innerHTML = `
+        // Panel izquierdo: Stats + Fortalezas
+        leftContent.innerHTML = `
             <div class="analysis-section">
-                <h4>📊 Estadísticas del Sistema ${formationKey}</h4>
+                <h4>📊 Estadísticas ${formationKey}</h4>
                 <div class="stat-bars">
                     ${Object.entries(data.stats).map(([key, val]) => `
                         <div class="stat-bar">
@@ -648,21 +652,24 @@ function showAnalysis(formationKey) {
             </div>
             
             <div class="analysis-section strengths">
-                <h4><span class="icon-strength material-icons-outlined" style="font-size:18px">check_circle</span> Fortalezas</h4>
+                <h4><span class="icon-strength material-icons-outlined" style="font-size:16px">check_circle</span> Fortalezas</h4>
                 <ul>
                     ${data.strengths.map(s => `<li>${s}</li>`).join("")}
                 </ul>
             </div>
-            
+        `;
+        
+        // Panel derecho: Debilidades + Recomendaciones
+        rightContent.innerHTML = `
             <div class="analysis-section weaknesses">
-                <h4><span class="icon-weakness material-icons-outlined" style="font-size:18px">warning</span> Debilidades</h4>
+                <h4><span class="icon-weakness material-icons-outlined" style="font-size:16px">warning</span> Debilidades</h4>
                 <ul>
                     ${data.weaknesses.map(w => `<li>${w}</li>`).join("")}
                 </ul>
             </div>
             
             <div class="analysis-section tips">
-                <h4><span class="icon-tip material-icons-outlined" style="font-size:18px">lightbulb</span> Recomendaciones Tácticas</h4>
+                <h4><span class="icon-tip material-icons-outlined" style="font-size:16px">lightbulb</span> Recomendaciones Tácticas</h4>
                 <ul>
                     ${data.tips.map(t => `<li>${t}</li>`).join("")}
                 </ul>
@@ -671,33 +678,12 @@ function showAnalysis(formationKey) {
         
         // Animar barras de estadísticas
         setTimeout(() => {
-            content.querySelectorAll(".stat-bar-fill").forEach(bar => {
+            leftContent.querySelectorAll(".stat-bar-fill").forEach(bar => {
                 bar.style.width = bar.dataset.value + "%";
             });
         }, 100);
         
     }, 1200);
-}
-
-function showOverlay() {
-    let overlay = document.querySelector(".overlay");
-    if (!overlay) {
-        overlay = document.createElement("div");
-        overlay.className = "overlay";
-        overlay.addEventListener("click", () => {
-            document.getElementById("analysisPanel").classList.remove("open");
-            removeOverlay();
-        });
-        document.body.appendChild(overlay);
-    }
-    setTimeout(() => overlay.classList.add("active"), 10);
-}
-
-function removeOverlay() {
-    const overlay = document.querySelector(".overlay");
-    if (overlay) {
-        overlay.classList.remove("active");
-    }
 }
 
 // ======================================
@@ -900,6 +886,50 @@ function initSquadSection() {
             </div>
         `;
         grid.appendChild(card);
+    });
+}
+
+// ======================================
+// PANTALLA COMPLETA
+// ======================================
+function initFullscreen() {
+    const btnFullscreen = document.getElementById("btnFullscreen");
+    const pitchContainer = document.querySelector(".pitch-container");
+    if (!btnFullscreen || !pitchContainer) return;
+
+    let exitBtn = null;
+
+    function enterFullscreen() {
+        pitchContainer.classList.add("fullscreen");
+        btnFullscreen.querySelector(".material-icons-outlined").textContent = "fullscreen_exit";
+        // Crear botón de salida flotante
+        exitBtn = document.createElement("button");
+        exitBtn.className = "fullscreen-exit-btn";
+        exitBtn.title = "Salir de pantalla completa";
+        exitBtn.innerHTML = '<span class="material-icons-outlined">fullscreen_exit</span>';
+        document.body.appendChild(exitBtn);
+        exitBtn.addEventListener("click", exitFullscreen);
+    }
+
+    function exitFullscreen() {
+        pitchContainer.classList.remove("fullscreen");
+        btnFullscreen.querySelector(".material-icons-outlined").textContent = "fullscreen";
+        if (exitBtn) { exitBtn.remove(); exitBtn = null; }
+    }
+
+    btnFullscreen.addEventListener("click", () => {
+        if (pitchContainer.classList.contains("fullscreen")) {
+            exitFullscreen();
+        } else {
+            enterFullscreen();
+        }
+    });
+
+    // Salir con Escape
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && pitchContainer.classList.contains("fullscreen")) {
+            exitFullscreen();
+        }
     });
 }
 
