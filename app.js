@@ -1125,37 +1125,66 @@ function initMobilePanels() {
         closeAllPanels();
         panel.classList.add("open");
         overlay.classList.add("visible");
+        // Prevent body scroll while panel is open
+        document.documentElement.style.overflow = "hidden";
         document.body.style.overflow = "hidden";
     }
 
     function closeAllPanels() {
-        panelLeft.classList.remove("open");
-        panelRight.classList.remove("open");
-        overlay.classList.remove("visible");
+        if (panelLeft) panelLeft.classList.remove("open");
+        if (panelRight) panelRight.classList.remove("open");
+        if (overlay) overlay.classList.remove("visible");
+        document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
     }
 
     if (btnToggleLeft) {
-        btnToggleLeft.addEventListener("click", () => openPanel(panelLeft));
+        btnToggleLeft.addEventListener("click", (e) => { e.stopPropagation(); openPanel(panelLeft); });
     }
     if (btnToggleRight) {
-        btnToggleRight.addEventListener("click", () => openPanel(panelRight));
+        btnToggleRight.addEventListener("click", (e) => { e.stopPropagation(); openPanel(panelRight); });
     }
     if (btnCloseLeft) {
-        btnCloseLeft.addEventListener("click", closeAllPanels);
+        btnCloseLeft.addEventListener("click", (e) => { e.stopPropagation(); closeAllPanels(); });
     }
     if (btnCloseRight) {
-        btnCloseRight.addEventListener("click", closeAllPanels);
+        btnCloseRight.addEventListener("click", (e) => { e.stopPropagation(); closeAllPanels(); });
     }
     if (overlay) {
         overlay.addEventListener("click", closeAllPanels);
     }
 
-    // Cerrar paneles al cambiar de tamaño a desktop
+    // Close panels on ESC key
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeAllPanels();
+    });
+
+    // Close panels when resizing to desktop
+    let resizeTimeout;
     window.addEventListener("resize", () => {
-        if (window.innerWidth > 900) {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            if (window.innerWidth > 900) {
+                closeAllPanels();
+            }
+        }, 150);
+    });
+
+    // Handle orientation change (mobile)
+    window.addEventListener("orientationchange", () => {
+        setTimeout(() => {
             closeAllPanels();
-        }
+        }, 300);
+    });
+
+    // Prevent scroll propagation from panel to body on touch
+    [panelLeft, panelRight].forEach(panel => {
+        if (!panel) return;
+        panel.addEventListener("touchmove", (e) => {
+            if (panel.classList.contains("open")) {
+                e.stopPropagation();
+            }
+        }, { passive: true });
     });
 }
 
