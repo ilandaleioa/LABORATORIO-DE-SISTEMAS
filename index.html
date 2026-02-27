@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Center - Laboratorio de Sistemas</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <svg viewBox="0 0 40 40" width="40" height="40">
+                    <circle cx="20" cy="20" r="18" fill="none" stroke="#e63946" stroke-width="2"/>
+                    <circle cx="20" cy="20" r="8" fill="#e63946"/>
+                    <text x="20" y="24" text-anchor="middle" fill="white" font-size="10" font-weight="bold">FC</text>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <h1>FOOTBALL CENTER</h1>
+                <p>LABORATORIO DE SISTEMAS</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Section: Pizarra Táctica -->
+        <section id="section-pizarra" class="section active">
+
+            <div class="controls-bar">
+                <div class="formation-selector">
+                    <select id="formationSelect">
+                        <option value="4-4-2">4-4-2</option>
+                        <option value="4-3-3">4-3-3</option>
+                        <option value="4-2-3-1">4-2-3-1</option>
+                        <option value="3-5-2">3-5-2</option>
+                        <option value="3-4-3">3-4-3</option>
+                        <option value="4-1-4-1">4-1-4-1</option>
+                        <option value="5-3-2">5-3-2</option>
+                        <option value="4-5-1">4-5-1</option>
+                        <option value="4-4-1-1">4-4-1-1</option>
+                        <option value="3-4-1-2">3-4-1-2</option>
+                    </select>
+                </div>
+                <button class="btn-icon" id="btnReset" title="Reiniciar posiciones">
+                    <span class="material-icons-outlined">refresh</span>
+                </button>
+                <button class="btn-ai" id="btnAnalyze">
+                    <span class="material-icons-outlined">psychology</span>
+                    Análisis IA
+                </button>
+            </div>
+
+            <div class="pitch-container">
+                <div class="pitch" id="pitch">
+                    <!-- Goals -->
+                    <div class="pitch-goal-net-top"></div>
+                    <div class="pitch-goal-net-bottom"></div>
+                    <!-- Field boundary -->
+                    <div class="pitch-boundary"></div>
+                    <!-- Field markings -->
+                    <div class="pitch-half-line"></div>
+                    <div class="pitch-center-circle"></div>
+                    <div class="pitch-center-dot"></div>
+                    <div class="pitch-penalty-area-top"></div>
+                    <div class="pitch-goal-area-top"></div>
+                    <div class="pitch-penalty-area-bottom"></div>
+                    <div class="pitch-goal-area-bottom"></div>
+                    <div class="pitch-penalty-dot-top"></div>
+                    <div class="pitch-penalty-dot-bottom"></div>
+                    <div class="pitch-penalty-arc-top"></div>
+                    <div class="pitch-penalty-arc-bottom"></div>
+                    <div class="pitch-corner-tl"></div>
+                    <div class="pitch-corner-tr"></div>
+                    <div class="pitch-corner-bl"></div>
+                    <div class="pitch-corner-br"></div>
+                    <!-- Players will be injected here -->
+                </div>
+            </div>
+
+            <!-- AI Analysis Modal -->
+            <div class="analysis-panel" id="analysisPanel">
+                <div class="analysis-header">
+                    <h3><span class="material-icons-outlined">psychology</span> Análisis Táctico IA</h3>
+                    <button class="btn-close" id="btnCloseAnalysis"><span class="material-icons-outlined">close</span></button>
+                </div>
+                <div class="analysis-content" id="analysisContent">
+                    <!-- Analysis will be injected -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Análisis Sistemas -->
+        <section id="section-analisis" class="section">
+            <div class="analysis-grid">
+                <div class="system-card" id="compFormation1">
+                    <h4>Sistema 1</h4>
+                    <select class="comp-select" data-comp="1">
+                        <option value="4-4-2">4-4-2</option>
+                        <option value="4-3-3">4-3-3</option>
+                        <option value="4-2-3-1">4-2-3-1</option>
+                        <option value="3-5-2">3-5-2</option>
+                        <option value="3-4-3">3-4-3</option>
+                        <option value="4-1-4-1">4-1-4-1</option>
+                        <option value="5-3-2">5-3-2</option>
+                        <option value="4-5-1">4-5-1</option>
+                    </select>
+                    <div class="mini-pitch" data-formation="1"></div>
+                </div>
+                <div class="vs-divider">VS</div>
+                <div class="system-card" id="compFormation2">
+                    <h4>Sistema 2</h4>
+                    <select class="comp-select" data-comp="2">
+                        <option value="4-3-3">4-3-3</option>
+                        <option value="4-4-2">4-4-2</option>
+                        <option value="4-2-3-1">4-2-3-1</option>
+                        <option value="3-5-2">3-5-2</option>
+                        <option value="3-4-3">3-4-3</option>
+                        <option value="4-1-4-1">4-1-4-1</option>
+                        <option value="5-3-2">5-3-2</option>
+                        <option value="4-5-1">4-5-1</option>
+                    </select>
+                    <div class="mini-pitch" data-formation="2"></div>
+                </div>
+            </div>
+            <button class="btn-ai full-width" id="btnCompare">
+                <span class="material-icons-outlined">psychology</span>
+                Comparar con IA
+            </button>
+            <div class="comparison-result" id="comparisonResult"></div>
+        </section>
+
+        <!-- Section: Enfrentamiento -->
+        <section id="section-enfrentamiento" class="section">
+            <div class="matchup-container">
+                <div class="matchup-pitch" id="matchupPitch">
+                    <div class="pitch matchup-field">
+                        <div class="pitch-goal-net-top"></div>
+                        <div class="pitch-goal-net-bottom"></div>
+                        <div class="pitch-boundary"></div>
+                        <div class="pitch-half-line"></div>
+                        <div class="pitch-center-circle"></div>
+                        <div class="pitch-center-dot"></div>
+                        <div class="pitch-penalty-area-top"></div>
+                        <div class="pitch-goal-area-top"></div>
+                        <div class="pitch-penalty-area-bottom"></div>
+                        <div class="pitch-goal-area-bottom"></div>
+                    </div>
+                </div>
+                <div class="matchup-controls">
+                    <div class="team-control">
+                        <label>Equipo Local</label>
+                        <select id="homeFormation">
+                            <option value="4-4-2">4-4-2</option>
+                            <option value="4-3-3">4-3-3</option>
+                            <option value="4-2-3-1">4-2-3-1</option>
+                            <option value="3-5-2">3-5-2</option>
+                            <option value="3-4-3">3-4-3</option>
+                        </select>
+                    </div>
+                    <div class="team-control">
+                        <label>Equipo Visitante</label>
+                        <select id="awayFormation">
+                            <option value="4-3-3">4-3-3</option>
+                            <option value="4-4-2">4-4-2</option>
+                            <option value="4-2-3-1">4-2-3-1</option>
+                            <option value="3-5-2">3-5-2</option>
+                            <option value="3-4-3">3-4-3</option>
+                        </select>
+                    </div>
+                    <button class="btn-ai" id="btnMatchAnalysis">
+                        <span class="material-icons-outlined">psychology</span>
+                        Analizar Enfrentamiento
+                    </button>
+                    <div class="matchup-analysis" id="matchupAnalysis"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Plantilla -->
+        <section id="section-plantilla" class="section">
+            <div class="squad-grid" id="squadGrid">
+                <!-- Generated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
