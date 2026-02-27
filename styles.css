@@ -1057,7 +1057,7 @@ body {
     
     .analysis-panel {
         width: 100%;
-        right: -100%;
+        left: -100%;
     }
     
     .matchup-container {
