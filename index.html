@@ -9,13 +9,31 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 </head>
 <body>
+    <!-- Mobile toggle buttons -->
+    <div class="mobile-panel-toggles" id="mobilePanelToggles">
+        <button class="mobile-toggle-btn" id="btnToggleLeft" title="Análisis y Recomendaciones">
+            <span class="material-icons-outlined">psychology</span>
+            <span class="toggle-label">Análisis</span>
+        </button>
+        <button class="mobile-toggle-btn" id="btnToggleRight" title="Debilidades y Fortalezas">
+            <span class="material-icons-outlined">tips_and_updates</span>
+            <span class="toggle-label">Fortalezas</span>
+        </button>
+    </div>
+
+    <!-- Mobile overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
     <!-- Layout wrapper -->
     <div class="app-layout" id="appLayout">
 
         <!-- Left Side Panel (AI Analysis - Stats & Strengths) -->
         <aside class="side-panel side-panel-left" id="sidePanelLeft">
+            <button class="panel-close-btn" id="btnCloseLeft">
+                <span class="material-icons-outlined">close</span>
+            </button>
             <div class="side-panel-header">
-                <h3><span class="material-icons-outlined">psychology</span> Análisis Táctico IA</h3>
+                <h3><span class="material-icons-outlined">psychology</span> Análisis y Recomendaciones</h3>
             </div>
             <div class="side-panel-content" id="sidePanelLeftContent">
                 <!-- Stats & Strengths injected here -->
@@ -189,8 +207,11 @@
 
         <!-- Right Side Panel (AI Analysis - Weaknesses & Tips) -->
         <aside class="side-panel side-panel-right" id="sidePanelRight">
+            <button class="panel-close-btn" id="btnCloseRight">
+                <span class="material-icons-outlined">close</span>
+            </button>
             <div class="side-panel-header">
-                <h3><span class="material-icons-outlined">tips_and_updates</span> Debilidades y Consejos</h3>
+                <h3><span class="material-icons-outlined">tips_and_updates</span> Debilidades y Fortalezas</h3>
             </div>
             <div class="side-panel-content" id="sidePanelRightContent">
                 <!-- Weaknesses & Tips injected here -->

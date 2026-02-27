@@ -64,8 +64,8 @@ body {
    SIDE PANELS
    ====================================== */
 .side-panel {
-    width: 300px;
-    min-width: 300px;
+    width: 380px;
+    min-width: 380px;
     height: 100vh;
     background: var(--bg-secondary);
     border-color: var(--border);
@@ -98,14 +98,14 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
     white-space: nowrap;
 }
 
 .side-panel-header h3 .material-icons-outlined {
     color: var(--accent);
-    font-size: 20px;
+    font-size: 22px;
 }
 
 .side-panel-content {
@@ -145,7 +145,7 @@ body {
 .main-content {
     flex: 1;
     overflow-y: auto;
-    padding: 0 40px 32px;
+    padding: 0 20px 32px;
     height: 100vh;
     min-width: 0;
 }
@@ -321,7 +321,7 @@ body {
    ====================================== */
 .pitch-container {
     width: 100%;
-    max-width: 700px;
+    max-width: 560px;
     margin: 0 auto;
     padding: 30px 0;
 }
@@ -995,39 +995,227 @@ body {
 }
 
 /* ======================================
+   MOBILE PANEL TOGGLES & OVERLAY
+   ====================================== */
+.mobile-panel-toggles {
+    display: none;
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    gap: 12px;
+    background: var(--bg-secondary);
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.mobile-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+}
+
+.mobile-toggle-btn .material-icons-outlined {
+    font-size: 18px;
+}
+
+.mobile-toggle-btn:hover,
+.mobile-toggle-btn:active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 199;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.visible {
+    display: block;
+    opacity: 1;
+}
+
+.panel-close-btn {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border-radius: 50%;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all var(--transition);
+}
+
+.panel-close-btn:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.panel-close-btn .material-icons-outlined {
+    font-size: 20px;
+}
+
+/* ======================================
    RESPONSIVE
    ====================================== */
+
+/* Large desktops / full HD */
+@media (max-width: 1400px) {
+    .side-panel {
+        width: 270px;
+        min-width: 270px;
+    }
+    
+    .main-content {
+        padding: 0 24px 24px;
+    }
+}
+
+/* Medium desktops */
 @media (max-width: 1200px) {
     .side-panel {
         width: 240px;
         min-width: 240px;
     }
-}
-
-@media (max-width: 900px) {
+    
     .main-content {
         padding: 0 20px 20px;
     }
+    
+    .pitch-container {
+        max-width: 580px;
+    }
+    
+    .side-panel .analysis-section li {
+        font-size: 11px;
+        padding: 6px 8px;
+    }
+}
 
-    .app-layout {
-        flex-direction: column;
+/* Tablets / small desktops */
+@media (max-width: 1024px) {
+    .side-panel {
+        width: 220px;
+        min-width: 220px;
     }
 
-    .side-panel {
+    .side-panel-header h3 {
+        font-size: 12px;
+    }
+
+    .pitch-container {
+        max-width: 520px;
+    }
+
+    .top-header .logo-text h1 {
+        font-size: 16px;
+    }
+
+    .analysis-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .system-card {
+        max-width: 100%;
         width: 100%;
-        min-width: 100%;
-        height: auto;
-        max-height: 50vh;
+    }
+
+    .vs-divider {
+        font-size: 22px;
+        margin-top: 0;
+    }
+}
+
+/* Tablet portrait / narrow screens - panels become drawers */
+@media (max-width: 900px) {
+    .mobile-panel-toggles {
+        display: flex;
+    }
+    
+    .panel-close-btn {
+        display: flex;
+    }
+    
+    .app-layout {
+        flex-direction: column;
+        position: relative;
+    }
+
+    .main-content {
+        padding: 0 16px 80px;
+        height: 100vh;
+        width: 100%;
+        order: 1;
+    }
+
+    /* Side panels become slide-in drawers */
+    .side-panel {
+        position: fixed;
+        top: 0;
+        width: 320px;
+        min-width: 320px;
+        max-width: 85vw;
+        height: 100vh;
+        z-index: 200;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.4);
     }
 
     .side-panel-left {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
+        left: 0;
+        transform: translateX(-100%);
+        border-right: 1px solid var(--border);
+    }
+
+    .side-panel-left.open {
+        transform: translateX(0);
     }
 
     .side-panel-right {
-        border-left: none;
-        border-top: 1px solid var(--border);
+        right: 0;
+        left: auto;
+        transform: translateX(100%);
+        border-left: 1px solid var(--border);
+    }
+
+    .side-panel-right.open {
+        transform: translateX(0);
+    }
+
+    .pitch-container {
+        max-width: 500px;
     }
     
     .matchup-container {
@@ -1036,6 +1224,347 @@ body {
     
     .matchup-controls {
         width: 100%;
+    }
+
+    .matchup-pitch {
+        max-width: 100%;
+    }
+}
+
+/* Small tablets / large phones */
+@media (max-width: 768px) {
+    .top-header {
+        padding: 14px 0;
+        gap: 10px;
+        margin-bottom: 4px;
+    }
+    
+    .top-header .logo img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .top-header .logo-text h1 {
+        font-size: 15px;
+        letter-spacing: 1.5px;
+    }
+
+    .top-header .logo-text p {
+        font-size: 9px;
+    }
+
+    .controls-bar {
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .formation-selector select {
+        padding: 8px 32px 8px 12px;
+        font-size: 13px;
+    }
+
+    .btn-ai {
+        padding: 8px 14px;
+        font-size: 12px;
+        gap: 6px;
+    }
+    
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .pitch-container {
+        max-width: 100%;
+        padding: 16px 0;
+    }
+
+    .player {
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
+    }
+
+    .player .player-name {
+        font-size: 8px;
+        bottom: -14px;
+    }
+    
+    .side-panel {
+        width: 280px;
+        min-width: 280px;
+    }
+
+    .squad-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 8px;
+    }
+
+    .squad-card {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .squad-number {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+    }
+
+    .squad-name {
+        font-size: 12px;
+    }
+
+    .mini-pitch {
+        padding-bottom: 120%;
+    }
+
+    .mini-pitch .mini-player {
+        width: 20px;
+        height: 20px;
+        font-size: 8px;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 576px) {
+    .main-content {
+        padding: 0 10px 80px;
+    }
+
+    .top-header {
+        padding: 10px 0;
+        gap: 8px;
+    }
+
+    .top-header .logo img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .top-header .logo-text h1 {
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    .top-header .logo-text p {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    .controls-bar {
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    .formation-selector select {
+        padding: 7px 28px 7px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+
+    .btn-ai {
+        padding: 7px 12px;
+        font-size: 11px;
+    }
+
+    .btn-ai .material-icons-outlined {
+        font-size: 16px;
+    }
+
+    .btn-icon {
+        width: 34px;
+        height: 34px;
+    }
+    
+    .btn-icon .material-icons-outlined {
+        font-size: 18px;
+    }
+
+    .pitch-container {
+        padding: 8px 0;
+    }
+
+    .player {
+        width: 30px;
+        height: 30px;
+        font-size: 11px;
+    }
+
+    .player .player-name {
+        font-size: 7px;
+        bottom: -12px;
+    }
+
+    .side-panel {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    .side-panel-content {
+        padding: 16px 12px;
+    }
+
+    .side-panel-header {
+        padding: 16px 12px 12px;
+    }
+
+    .analysis-grid {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .system-card {
+        max-width: 100%;
+        padding: 14px;
+    }
+
+    .vs-divider {
+        font-size: 20px;
+        margin: 0;
+    }
+
+    .squad-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .squad-card {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .squad-number {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .squad-name {
+        font-size: 11px;
+    }
+
+    .squad-position {
+        font-size: 10px;
+    }
+
+    .mobile-toggle-btn .toggle-label {
+        display: none;
+    }
+
+    .mobile-panel-toggles {
+        padding: 6px 12px;
+        gap: 8px;
+    }
+
+    .mobile-toggle-btn {
+        padding: 10px 14px;
+    }
+
+    .matchup-controls .btn-ai {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .comparison-result.visible {
+        padding: 16px;
+    }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+    .top-header .logo-text h1 {
+        font-size: 11px;
+    }
+    
+    .top-header .logo img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .player {
+        width: 26px;
+        height: 26px;
+        font-size: 10px;
+    }
+
+    .player .player-name {
+        font-size: 6px;
+        bottom: -10px;
+    }
+
+    .squad-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .controls-bar {
+        gap: 4px;
+    }
+
+    .formation-selector select {
+        padding: 6px 24px 6px 8px;
+        font-size: 11px;
+    }
+
+    .btn-ai {
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+
+    .btn-icon {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* Landscape phones - optimize pitch height */
+@media (max-height: 500px) and (orientation: landscape) {
+    .main-content {
+        padding: 0 10px 60px;
+    }
+
+    .top-header {
+        padding: 6px 0;
+        margin-bottom: 2px;
+    }
+
+    .top-header .logo img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .top-header .logo-text h1 {
+        font-size: 12px;
+    }
+
+    .top-header .logo-text p {
+        font-size: 7px;
+    }
+
+    .controls-bar {
+        margin-bottom: 6px;
+    }
+
+    .pitch-container {
+        max-width: 320px;
+        padding: 4px 0;
+    }
+
+    .player {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+}
+
+/* Ensure proper behavior for fullscreen mode on all sizes */
+@media (max-width: 900px) {
+    .pitch-container.fullscreen .pitch {
+        max-width: 100%;
+        max-height: 90vh;
     }
 }
 
@@ -1077,7 +1606,7 @@ body {
 }
 
 .side-panel .analysis-section h4 {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.5px;
     margin-bottom: 10px;
@@ -1094,8 +1623,8 @@ body {
 }
 
 .side-panel .analysis-section li {
-    padding: 8px 10px;
-    font-size: 12px;
+    padding: 10px 12px;
+    font-size: 14px;
     line-height: 1.55;
     color: var(--text-secondary);
     border-left: 3px solid var(--border);
@@ -1137,7 +1666,7 @@ body {
 }
 
 .side-panel .stat-bar-label {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -1145,13 +1674,13 @@ body {
 }
 
 .side-panel .stat-bar-value {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--text-primary);
 }
 
 .side-panel .stat-bar-track {
-    height: 5px;
+    height: 6px;
     background: var(--bg-card);
     border-radius: 3px;
     overflow: hidden;

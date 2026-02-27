@@ -450,6 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initMatchupSection();
     initSquadSection();
     initFullscreen();
+    initMobilePanels();
     renderFormation(currentFormation);
 });
 
@@ -632,13 +633,18 @@ function showAnalysis(formationKey) {
             return;
         }
         
-        // Panel izquierdo: Stats + Fortalezas
+        // Panel izquierdo: Stats + Recomendaciones Tácticas
         leftContent.innerHTML = `
-            <div class="analysis-section">
-                <h4>📊 Estadísticas ${formationKey}</h4>
+            <div class="analysis-section" data-section="stats" data-formation="${formationKey}">
+                <h4>
+                    <span>📊 Estadísticas ${formationKey}</span>
+                    <button class="btn-edit-section" onclick="toggleEditSection(this, 'stats', '${formationKey}')" title="Editar">
+                        <span class="material-icons-outlined">edit</span>
+                    </button>
+                </h4>
                 <div class="stat-bars">
                     ${Object.entries(data.stats).map(([key, val]) => `
-                        <div class="stat-bar">
+                        <div class="stat-bar" data-stat-key="${key}">
                             <div class="stat-bar-header">
                                 <span class="stat-bar-label">${capitalizeFirst(key)}</span>
                                 <span class="stat-bar-value">${val}</span>
@@ -651,27 +657,42 @@ function showAnalysis(formationKey) {
                 </div>
             </div>
             
-            <div class="analysis-section strengths">
-                <h4><span class="icon-strength material-icons-outlined" style="font-size:16px">check_circle</span> Fortalezas</h4>
+            <div class="analysis-section tips" data-section="tips" data-formation="${formationKey}">
+                <h4>
+                    <span><span class="icon-tip material-icons-outlined" style="font-size:16px">lightbulb</span> Recomendaciones Tácticas</span>
+                    <button class="btn-edit-section" onclick="toggleEditSection(this, 'tips', '${formationKey}')" title="Editar">
+                        <span class="material-icons-outlined">edit</span>
+                    </button>
+                </h4>
                 <ul>
-                    ${data.strengths.map(s => `<li>${s}</li>`).join("")}
+                    ${data.tips.map(t => `<li>${t}</li>`).join("")}
                 </ul>
             </div>
         `;
         
-        // Panel derecho: Debilidades + Recomendaciones
+        // Panel derecho: Debilidades + Fortalezas
         rightContent.innerHTML = `
-            <div class="analysis-section weaknesses">
-                <h4><span class="icon-weakness material-icons-outlined" style="font-size:16px">warning</span> Debilidades</h4>
+            <div class="analysis-section weaknesses" data-section="weaknesses" data-formation="${formationKey}">
+                <h4>
+                    <span><span class="icon-weakness material-icons-outlined" style="font-size:16px">warning</span> Debilidades</span>
+                    <button class="btn-edit-section" onclick="toggleEditSection(this, 'weaknesses', '${formationKey}')" title="Editar">
+                        <span class="material-icons-outlined">edit</span>
+                    </button>
+                </h4>
                 <ul>
                     ${data.weaknesses.map(w => `<li>${w}</li>`).join("")}
                 </ul>
             </div>
             
-            <div class="analysis-section tips">
-                <h4><span class="icon-tip material-icons-outlined" style="font-size:16px">lightbulb</span> Recomendaciones Tácticas</h4>
+            <div class="analysis-section strengths" data-section="strengths" data-formation="${formationKey}">
+                <h4>
+                    <span><span class="icon-strength material-icons-outlined" style="font-size:16px">check_circle</span> Fortalezas</span>
+                    <button class="btn-edit-section" onclick="toggleEditSection(this, 'strengths', '${formationKey}')" title="Editar">
+                        <span class="material-icons-outlined">edit</span>
+                    </button>
+                </h4>
                 <ul>
-                    ${data.tips.map(t => `<li>${t}</li>`).join("")}
+                    ${data.strengths.map(s => `<li>${s}</li>`).join("")}
                 </ul>
             </div>
         `;
@@ -894,41 +915,246 @@ function initSquadSection() {
 // ======================================
 function initFullscreen() {
     const btnFullscreen = document.getElementById("btnFullscreen");
-    const pitchContainer = document.querySelector(".pitch-container");
-    if (!btnFullscreen || !pitchContainer) return;
-
-    let exitBtn = null;
+    const appLayout = document.getElementById("appLayout");
+    if (!btnFullscreen || !appLayout) return;
 
     function enterFullscreen() {
-        pitchContainer.classList.add("fullscreen");
+        const el = document.documentElement;
+        if (el.requestFullscreen) {
+            el.requestFullscreen();
+        } else if (el.webkitRequestFullscreen) {
+            el.webkitRequestFullscreen();
+        } else if (el.msRequestFullscreen) {
+            el.msRequestFullscreen();
+        }
         btnFullscreen.querySelector(".material-icons-outlined").textContent = "fullscreen_exit";
-        // Crear botón de salida flotante
-        exitBtn = document.createElement("button");
-        exitBtn.className = "fullscreen-exit-btn";
-        exitBtn.title = "Salir de pantalla completa";
-        exitBtn.innerHTML = '<span class="material-icons-outlined">fullscreen_exit</span>';
-        document.body.appendChild(exitBtn);
-        exitBtn.addEventListener("click", exitFullscreen);
     }
 
     function exitFullscreen() {
-        pitchContainer.classList.remove("fullscreen");
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
         btnFullscreen.querySelector(".material-icons-outlined").textContent = "fullscreen";
-        if (exitBtn) { exitBtn.remove(); exitBtn = null; }
     }
 
     btnFullscreen.addEventListener("click", () => {
-        if (pitchContainer.classList.contains("fullscreen")) {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
             exitFullscreen();
         } else {
             enterFullscreen();
         }
     });
 
-    // Salir con Escape
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && pitchContainer.classList.contains("fullscreen")) {
-            exitFullscreen();
+    // Actualizar icono cuando se sale con Escape o de otra forma
+    document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement) {
+            btnFullscreen.querySelector(".material-icons-outlined").textContent = "fullscreen";
+        }
+    });
+    document.addEventListener("webkitfullscreenchange", () => {
+        if (!document.webkitFullscreenElement) {
+            btnFullscreen.querySelector(".material-icons-outlined").textContent = "fullscreen";
+        }
+    });
+}
+
+// ======================================
+// EDICIÓN DEL ANÁLISIS IA
+// ======================================
+function toggleEditSection(btn, sectionType, formationKey) {
+    const sectionEl = btn.closest('.analysis-section');
+    const isEditing = sectionEl.classList.contains('editing');
+    
+    if (isEditing) {
+        cancelEditSection(sectionEl, sectionType, formationKey);
+    } else {
+        startEditSection(sectionEl, sectionType, formationKey);
+    }
+}
+
+function startEditSection(sectionEl, sectionType, formationKey) {
+    const data = ANALYSIS_DATA[formationKey];
+    if (!data) return;
+    
+    sectionEl.classList.add('editing');
+    const editBtn = sectionEl.querySelector('.btn-edit-section');
+    editBtn.innerHTML = '<span class="material-icons-outlined">close</span>';
+    editBtn.title = 'Cancelar';
+    
+    if (sectionType === 'stats') {
+        const statBars = sectionEl.querySelector('.stat-bars');
+        statBars.innerHTML = Object.entries(data.stats).map(([key, val]) => `
+            <div class="stat-edit-row" data-stat-key="${key}">
+                <label class="stat-edit-label">${capitalizeFirst(key)}</label>
+                <input type="range" class="stat-edit-range" min="0" max="100" value="${val}" 
+                    oninput="this.nextElementSibling.textContent = this.value">
+                <span class="stat-edit-value">${val}</span>
+            </div>
+        `).join('');
+        
+        // Add save button
+        const saveBar = document.createElement('div');
+        saveBar.className = 'edit-action-bar';
+        saveBar.innerHTML = `
+            <button class="btn-edit-save" onclick="saveEditStats(this, '${formationKey}')">
+                <span class="material-icons-outlined">check</span> Guardar
+            </button>
+        `;
+        statBars.appendChild(saveBar);
+    } else {
+        // For tips, weaknesses, strengths - editable list
+        const ul = sectionEl.querySelector('ul');
+        const items = data[sectionType];
+        
+        ul.innerHTML = items.map((item, idx) => `
+            <li class="edit-item">
+                <textarea class="edit-textarea" rows="2">${item}</textarea>
+                <button class="btn-remove-item" onclick="removeEditItem(this)" title="Eliminar">
+                    <span class="material-icons-outlined">delete</span>
+                </button>
+            </li>
+        `).join('');
+        
+        // Add "add item" and save buttons
+        const actionBar = document.createElement('div');
+        actionBar.className = 'edit-action-bar';
+        actionBar.innerHTML = `
+            <button class="btn-edit-add" onclick="addEditItem(this)">
+                <span class="material-icons-outlined">add</span> Añadir
+            </button>
+            <button class="btn-edit-save" onclick="saveEditList(this, '${sectionType}', '${formationKey}')">
+                <span class="material-icons-outlined">check</span> Guardar
+            </button>
+        `;
+        ul.parentElement.appendChild(actionBar);
+    }
+}
+
+function cancelEditSection(sectionEl, sectionType, formationKey) {
+    sectionEl.classList.remove('editing');
+    // Re-render the analysis to restore original view
+    showAnalysis(formationKey);
+}
+
+function addEditItem(btn) {
+    const ul = btn.closest('.analysis-section').querySelector('ul');
+    const li = document.createElement('li');
+    li.className = 'edit-item';
+    li.innerHTML = `
+        <textarea class="edit-textarea" rows="2" placeholder="Escribe aquí..."></textarea>
+        <button class="btn-remove-item" onclick="removeEditItem(this)" title="Eliminar">
+            <span class="material-icons-outlined">delete</span>
+        </button>
+    `;
+    ul.appendChild(li);
+    li.querySelector('textarea').focus();
+}
+
+function removeEditItem(btn) {
+    const li = btn.closest('li');
+    li.style.opacity = '0';
+    li.style.transform = 'translateX(-20px)';
+    setTimeout(() => li.remove(), 200);
+}
+
+function saveEditStats(btn, formationKey) {
+    const sectionEl = btn.closest('.analysis-section');
+    const rows = sectionEl.querySelectorAll('.stat-edit-row');
+    
+    rows.forEach(row => {
+        const key = row.dataset.statKey;
+        const val = parseInt(row.querySelector('.stat-edit-range').value);
+        ANALYSIS_DATA[formationKey].stats[key] = val;
+    });
+    
+    sectionEl.classList.remove('editing');
+    showAnalysis(formationKey);
+    showSaveConfirmation(sectionEl);
+}
+
+function saveEditList(btn, sectionType, formationKey) {
+    const sectionEl = btn.closest('.analysis-section');
+    const textareas = sectionEl.querySelectorAll('.edit-textarea');
+    
+    const newItems = [];
+    textareas.forEach(ta => {
+        const val = ta.value.trim();
+        if (val) newItems.push(val);
+    });
+    
+    ANALYSIS_DATA[formationKey][sectionType] = newItems;
+    sectionEl.classList.remove('editing');
+    showAnalysis(formationKey);
+    showSaveConfirmation(sectionEl);
+}
+
+function showSaveConfirmation(nearElement) {
+    // Brief visual feedback
+    const toast = document.createElement('div');
+    toast.className = 'save-toast';
+    toast.innerHTML = '<span class="material-icons-outlined">check_circle</span> Guardado';
+    document.body.appendChild(toast);
+    
+    requestAnimationFrame(() => {
+        toast.classList.add('visible');
+    });
+    
+    setTimeout(() => {
+        toast.classList.remove('visible');
+        setTimeout(() => toast.remove(), 300);
+    }, 1500);
+}
+
+// ======================================
+// PANELES MÓVILES (SLIDE-IN DRAWERS)
+// ======================================
+function initMobilePanels() {
+    const btnToggleLeft = document.getElementById("btnToggleLeft");
+    const btnToggleRight = document.getElementById("btnToggleRight");
+    const btnCloseLeft = document.getElementById("btnCloseLeft");
+    const btnCloseRight = document.getElementById("btnCloseRight");
+    const panelLeft = document.getElementById("sidePanelLeft");
+    const panelRight = document.getElementById("sidePanelRight");
+    const overlay = document.getElementById("mobileOverlay");
+
+    function openPanel(panel) {
+        closeAllPanels();
+        panel.classList.add("open");
+        overlay.classList.add("visible");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeAllPanels() {
+        panelLeft.classList.remove("open");
+        panelRight.classList.remove("open");
+        overlay.classList.remove("visible");
+        document.body.style.overflow = "";
+    }
+
+    if (btnToggleLeft) {
+        btnToggleLeft.addEventListener("click", () => openPanel(panelLeft));
+    }
+    if (btnToggleRight) {
+        btnToggleRight.addEventListener("click", () => openPanel(panelRight));
+    }
+    if (btnCloseLeft) {
+        btnCloseLeft.addEventListener("click", closeAllPanels);
+    }
+    if (btnCloseRight) {
+        btnCloseRight.addEventListener("click", closeAllPanels);
+    }
+    if (overlay) {
+        overlay.addEventListener("click", closeAllPanels);
+    }
+
+    // Cerrar paneles al cambiar de tamaño a desktop
+    window.addEventListener("resize", () => {
+        if (window.innerWidth > 900) {
+            closeAllPanels();
         }
     });
 }
